@@ -18,7 +18,7 @@ pipeline {
         stage("Build Artifact") {
             steps {
                 script {
-                    java --version
+                    sh "java --version"
                     sh "mvn clean install"
                 }
             }
