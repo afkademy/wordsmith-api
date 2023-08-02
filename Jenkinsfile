@@ -4,6 +4,7 @@ pipeline {
         maven "maven-3.9"
         jdk "jdk-17"
     }
+ 
 
     stages {
         stage("Init"){
@@ -17,6 +18,7 @@ pipeline {
         stage("Build Artifact") {
             steps {
                 script {
+                    java --version
                     sh "mvn clean install"
                 }
             }
