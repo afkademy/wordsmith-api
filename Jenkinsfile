@@ -1,5 +1,9 @@
 pipeline {
     agent any 
+    tools {
+        maven "maven-3.9"
+        jdk "jdk-17"
+    }
 
     stages {
         stage("Init"){
@@ -11,9 +15,6 @@ pipeline {
         }
 
         stage("Build Artifact") {
-            tools {
-                maven "maven-3.9"
-            }
             steps {
                 script {
                     sh "mvn clean install"
@@ -22,9 +23,6 @@ pipeline {
         }
 
         stage ("Unit Test") {
-            tools {
-                maven "maven-3.9"
-            }
             steps {
                 script {
                     sh "mvn test"
@@ -32,6 +30,6 @@ pipeline {
             }
         }
 
-        
+
     }
 }
