@@ -54,6 +54,15 @@ pipeline {
             }
         }
 
-        
+        stage ("Build Docker Image") {
+            steps {
+                script {
+                    checkout scm 
+                    
+                    def image = docker.build('wordsmith-api:latest')
+                    image.push()
+                }
+            }
+        }
     }
 }
