@@ -32,6 +32,7 @@ pipeline {
             steps {
                 script {
                     unarchive mapping: ['target/*.jar': './']
+                    sh "ls -l target/"
                     sh "docker build -t 345331916214.dkr.ecr.us-east-2.amazonaws.com/worthsmith-api:1.1.0-SNAPSHOT ."
                 }
             }
