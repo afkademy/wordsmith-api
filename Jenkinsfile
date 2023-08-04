@@ -2,7 +2,11 @@ pipeline {
     agent any 
     
     stages {
+    
         stage("Init"){
+            def dockerHome = tool "docker"
+            env.PATH = "${dockerHome}/bin:${env.PATH}"
+
             steps{
                script {
                     git branch: 'main', credentialsId: 'github', url: 'https://github.com/afkademy/wordsmith-api.git'
@@ -58,7 +62,7 @@ pipeline {
             steps {
                 script {
                     checkout scm 
-                    
+
                     def image = docker.build('wordsmith-api:latest')
                     image.push()
                 }
