@@ -2,11 +2,15 @@ pipeline {
     agent any 
     
     stages {
-    
-        stage("Init"){
-            def dockerHome = tool "docker"
-            env.PATH = "${dockerHome}/bin:${env.PATH}"
+        
+        stage("Initialize"){
+            steps {
+                def dockerHome = tool "docker"
+                env.PATH = "${dockerHome}/bin:${env.PATH}"
+            }
+        }
 
+        stage("Git"){
             steps{
                script {
                     git branch: 'main', credentialsId: 'github', url: 'https://github.com/afkademy/wordsmith-api.git'
