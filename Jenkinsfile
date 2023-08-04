@@ -31,10 +31,11 @@ pipeline {
             steps {
                 script {
                     sh "mvn clean install"
+
                     // Archive the target folder
-                    archiveArtifacts 'target/*.jar'
-                    def fullArtifactPath = artifacts[0].archivePath
-                    echo "Archive Path: ${fullArtifactPath}"  
+                    // archiveArtifacts 'target/*.jar'
+                    def targetDir = sh(returnStdout: true, script: 'mvn help:evaluate -Dexpression=project.build.directory').trim()
+                    echo "project dir: ${targetDir}"
                 }
             }
         }
@@ -43,8 +44,8 @@ pipeline {
         stage ("Build Docker Image") {
             steps {
                 script {
-                    unarchive mapping: ['target/*.jar': './']
-                    sh "docker build --context=${fullArtifactPath} -t 345331916214.dkr.ecr.us-east-2.amazonaws.com/worthsmith-api:1.1.0-SNAPSHOT ."
+                    //unarchive mapping: ['target/*.jar': './']
+                    sh "docker build --context=${targetDir} -t 345331916214.dkr.ecr.us-east-2.amazonaws.com/worthsmith-api:1.1.0-SNAPSHOT ."
                 }
             }
         }
