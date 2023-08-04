@@ -19,10 +19,20 @@ pipeline {
                script {
                     sh "ls -l"
                     git branch: 'main', credentialsId: 'github', url: 'https://github.com/afkademy/wordsmith-api.git'
+                }
+            }
+        }
 
+         stage("Build Artifact") {
+            tools {
+                maven "maven-3.9"
+                jdk "jdk-17"
+            }
+            steps {
+                script {
+                    sh "mvn clean install"
                     // Archive the target folder
                     archiveArtifacts artifacts:  '/var/jenkins/workspace/project/target/*.jar'
-
                 }
             }
         }
