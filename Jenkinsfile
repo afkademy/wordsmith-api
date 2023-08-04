@@ -8,8 +8,6 @@ pipeline {
                 script {
                     def dockerHome = tool "docker"
                     env.PATH = "${dockerHome}/bin:${env.PATH}"
-                    sh "ls -l"
-                    sh "ls target/"
                 }
             }
         }
@@ -23,31 +21,23 @@ pipeline {
             }
         }
 
-         stage("Build Artifact") {
-            tools {
-                maven "maven-3.9"
-                jdk "jdk-17"
-            }
-            steps {
-                script {
-                    sh "mvn clean install"
-
-                    // Archive the target folder
-                    // archiveArtifacts 'target/*.jar'
-                    def targetDir = sh(returnStdout: true, script: 'mvn help:evaluate -Dexpression=project.build.directory').trim()
-                    env.targetDir = targetDir
-                    echo "project dir: ${targetDir}"
-                }
-            }
-        }
+        //  stage("Build Artifact") {
+        //     tools {
+        //         maven "maven-3.9"
+        //         jdk "jdk-17"
+        //     }
+        //     steps {
+        //         script {
+        //             sh "mvn clean install"
+        //         }
+        //     }
+        // }
 
 
         stage ("Build Docker Image") {
             steps {
                 script {
-                    //unarchive mapping: ['target/*.jar': './']
-                    sh "docker build --context=${env.targetDir} -t 345331916214.dkr.ecr.us-east-2.amazonaws.com/worthsmith-api:1.1.0-SNAPSHOT ."
-                    sh "docker images -a"
+                    sh "docker build  -t 345331916214.dkr.ecr.us-east-2.amazonaws.com/worthsmith-api:1.1.0-SNAPSHOT ."
                 }
             }
         }
