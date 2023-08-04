@@ -29,6 +29,7 @@ pipeline {
                 script {
                     sh "java --version"
                     sh "mvn clean install"
+                    sh "ls -l target/"
                 }
             }
         }
