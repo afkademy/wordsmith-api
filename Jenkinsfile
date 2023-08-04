@@ -2,15 +2,27 @@ pipeline {
     agent any 
     
     stages {
-        stage ("List"){
+        
+        stage("Initialize"){
             steps {
-                script{
+                script {
+                    def dockerHome = tool "docker"
+                    env.PATH = "${dockerHome}/bin:${env.PATH}"
                     sh "ls -l"
                     sh "ls target/"
                 }
             }
         }
-        
+
+        stage("Git"){
+            steps{
+               script {
+                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/afkademy/wordsmith-api.git'
+                }
+            }
+        }
+
+
         stage ("Build Docker Image") {
             steps {
                 script {
