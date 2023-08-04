@@ -21,7 +21,7 @@ pipeline {
                     git branch: 'main', credentialsId: 'github', url: 'https://github.com/afkademy/wordsmith-api.git'
 
                     // Archive the target folder
-                    archiveArtifacts artifacts: 'target/*.jar'
+                    archiveArtifacts artifacts:  '/var/jenkins/workspace/project/target/*.jar'
 
                 }
             }
@@ -31,10 +31,8 @@ pipeline {
         stage ("Build Docker Image") {
             steps {
                 script {
-                    sh "mkdir build"
-                    unarchive mapping: ['target/*.jar': './build/']
-                    sh "ls -l target/"
-                    sh "docker build -t 345331916214.dkr.ecr.us-east-2.amazonaws.com/worthsmith-api:1.1.0-SNAPSHOT ."
+                    unarchive mapping: ['target/*.jar': './']
+                    sh "docker build --context=/var/jenkins/workspace/project -t 345331916214.dkr.ecr.us-east-2.amazonaws.com/worthsmith-api:1.1.0-SNAPSHOT ."
                 }
             }
         }
