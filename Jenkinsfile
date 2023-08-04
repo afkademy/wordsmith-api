@@ -17,6 +17,7 @@ pipeline {
         stage("Git"){
             steps{
                script {
+                    sh "pwd"
                     git branch: 'main', credentialsId: 'github', url: 'https://github.com/afkademy/wordsmith-api.git'
                 }
             }
@@ -26,6 +27,7 @@ pipeline {
         stage ("Build Docker Image") {
             steps {
                 script {
+                    sh "pwd"
                     sh "docker build -t 345331916214.dkr.ecr.us-east-2.amazonaws.com/worthsmith-api:1.1.0-SNAPSHOT ."
                 }
             }
