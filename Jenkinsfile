@@ -32,7 +32,9 @@ pipeline {
                 script {
                     sh "mvn clean install"
                     // Archive the target folder
-                    archiveArtifacts artifacts:  '/var/jenkins/workspace/project/target/*.jar'
+                    archiveArtifacts 'target/*.jar'
+                    def fullArtifactPath = artifacts[0].archivePath
+                    echo "Archive Path: ${fullArtifactPath}"  
                 }
             }
         }
@@ -42,7 +44,7 @@ pipeline {
             steps {
                 script {
                     unarchive mapping: ['target/*.jar': './']
-                    sh "docker build --context=/var/jenkins/workspace/project -t 345331916214.dkr.ecr.us-east-2.amazonaws.com/worthsmith-api:1.1.0-SNAPSHOT ."
+                    sh "docker build --context=${fullArtifactPath} -t 345331916214.dkr.ecr.us-east-2.amazonaws.com/worthsmith-api:1.1.0-SNAPSHOT ."
                 }
             }
         }
