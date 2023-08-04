@@ -46,6 +46,7 @@ pipeline {
                 script {
                     //unarchive mapping: ['target/*.jar': './']
                     sh "docker build --context=${targetDir} -t 345331916214.dkr.ecr.us-east-2.amazonaws.com/worthsmith-api:1.1.0-SNAPSHOT ."
+                    sh "docker images -a"
                 }
             }
         }
