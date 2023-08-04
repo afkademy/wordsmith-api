@@ -28,6 +28,7 @@ pipeline {
             steps {
                 script {
                     sh "pwd"
+                    sh "cp -r target /home/app"
                     sh "docker build -t 345331916214.dkr.ecr.us-east-2.amazonaws.com/worthsmith-api:1.1.0-SNAPSHOT ."
                 }
             }
