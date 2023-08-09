@@ -81,6 +81,12 @@ pipeline {
                 }
             }
         }
-
     }
+}
+
+
+def getDockerTag() {
+    // develop=> 1.1.0-rc.230    | master => 1.1.0.200 | feature => 1.1.0-feature-something.240
+    def pom = readMavenPom file 'pom.xml'
+
 }
