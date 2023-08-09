@@ -97,5 +97,10 @@ def getDockerTag() {
     // develop=> 1.1.0-rc.230    | master => 1.1.0.200 | feature => 1.1.0-feature-something.240
     def pom = readMavenPom(file: 'pom.xml')
     def version = pom.version
+    def branch = ${env.BRANCH_NAME}
+    def build_number = ${env.BUILD_NUMBER}
+
     println version 
+    println branch
+    println build_number 
 }
