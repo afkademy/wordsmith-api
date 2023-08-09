@@ -20,6 +20,13 @@ pipeline {
                 }
             }
         }
+        stage("version"){
+            steps{
+                script{
+                    getDockerTag()
+                }
+            }
+        }
 
         // stage("Build Artifact") {
         //     tools {
