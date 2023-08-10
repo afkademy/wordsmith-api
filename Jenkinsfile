@@ -89,10 +89,10 @@ pipeline {
     post{
         always {
             script {
-                def msg = "See ${env.BUILD_URL}"
+                def msg = "See ${env.BUILD_URL}/console"
                 def subject = "Jenkins: ${env.JOB_NAME}: Build status is ${currentBuild.currentResult}"
                 withAWS([credentials: 'aws-creds', region: 'us-east-2']){
-                    sh "aws sns publish --topic-arn arn:aws:sns:us-east-2:345331916214:jenkins-notification --msg ${msg} --subject ${subject}"
+                    sh "aws sns publish --topic-arn arn:aws:sns:us-east-2:345331916214:jenkins-notification --message ${msg} --subject ${subject}"
                 }
             }
         }
