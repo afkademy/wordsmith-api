@@ -17,80 +17,72 @@ pipeline {
             steps{
                script {
                     git branch: 'main', credentialsId: 'github', url: 'https://github.com/afkademy/wordsmith-api.git'
-                    // getDockerTag()
                 }
             }
         }
 
-        stage("version"){
-            steps{
+        stage("Build Artifact") {
+            tools {
+                maven "maven-3.9"
+                jdk "jdk-17"
+            }
+            steps {
+                script {
+                    sh "mvn clean install"
+                }
+            }
+        }
+
+        stage ("Unit Test") {
+            tools {
+                maven "maven-3.9"
+                jdk "jdk-17"
+            }
+            steps {
+                script {
+                    sh "mvn test"
+                }
+            }
+        }
+
+        stage ("Sonar Scan") {
+            tools {
+                maven "maven-3.9"
+            }
+            steps {
+                withSonarQubeEnv("sonar"){
+                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar -Dsonar.projectKey=worthsmith-api'
+                }
+            }
+        }
+
+        stage("Quantity Gates") {
+            steps {
+                timeout(time: 4, unit: "MINUTES"){
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage ("Build Docker Image") {
+            steps {
+                script {
+                    def tag = getDockerTag()
+                    sh "docker build -t 345331916214.dkr.ecr.us-east-2.amazonaws.com/worthsmith-api:${tag} ."
+                }
+            }
+        }
+
+        stage("Push to ECR"){
+            steps {
                 script{
-                    getDockerTag()
+                    withAWS([credentials: 'aws-creds', region: 'us-east-2']) {
+                        sh "aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 345331916214.dkr.ecr.us-east-2.amazonaws.com"
+                        sh "docker push 345331916214.dkr.ecr.us-east-2.amazonaws.com/worthsmith-api:${tag}"
+                    }
                 }
             }
         }
-
-        // stage("Build Artifact") {
-        //     tools {
-        //         maven "maven-3.9"
-        //         jdk "jdk-17"
-        //     }
-        //     steps {
-        //         script {
-        //             sh "mvn clean install"
-        //         }
-        //     }
-        // }
-
-        // stage ("Unit Test") {
-        //     tools {
-        //         maven "maven-3.9"
-        //         jdk "jdk-17"
-        //     }
-        //     steps {
-        //         script {
-        //             sh "mvn test"
-        //         }
-        //     }
-        // }
-
-        // stage ("Sonar Scan") {
-        //     tools {
-        //         maven "maven-3.9"
-        //     }
-        //     steps {
-        //         withSonarQubeEnv("sonar"){
-        //             sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar -Dsonar.projectKey=worthsmith-api'
-        //         }
-        //     }
-        // }
-
-        // stage("Quantity Gates") {
-        //     steps {
-        //         timeout(time: 4, unit: "MINUTES"){
-        //             waitForQualityGate abortPipeline: true
-        //         }
-        //     }
-        // }
-
-        // stage ("Build Docker Image") {
-        //     steps {
-        //         script {
-        //             sh "docker build -t 345331916214.dkr.ecr.us-east-2.amazonaws.com/worthsmith-api:1.1.0-SNAPSHOT ."
-        //         }
-        //     }
-        // }
-
-        // stage("Push to ECR"){
-        //     steps {
-        //         script{
-        //             withAWS([credentials: 'aws-creds', region: 'us-east-2']) {
-        //                 sh "aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 345331916214.dkr.ecr.us-east-2.amazonaws.com"
-        //                 sh "docker push 345331916214.dkr.ecr.us-east-2.amazonaws.com/worthsmith-api:1.1.0-SNAPSHOT"
-        //             }
-        //         }
-        //     }
-        // }
     }
 }
 
@@ -112,6 +104,6 @@ def getDockerTag() {
         branch = branch.replace("/", "-").replace("\\", "-")
         tag = "${version}.${build_number}-${branch}"
     }
-    println tag 
+
     return tag 
 }
