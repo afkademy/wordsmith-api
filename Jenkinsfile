@@ -113,6 +113,7 @@ def getDockerTag() {
         tag = "${version}.${build_number}-${branch}"
     }
 
+
     println tag 
     return tag 
 }
