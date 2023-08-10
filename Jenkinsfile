@@ -103,4 +103,5 @@ def getDockerTag() {
     println version 
     println branch
     println build_number
+    
 }
